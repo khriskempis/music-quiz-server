@@ -1,0 +1,14 @@
+{
+  "name": "music-quiz-server",
+  "version": "1.0.0",
+  "description": "music test server",
+  "main": "server.js",
+  "scripts": {
+    "test": "mocha --exit"
+  },
+  "author": "Khris-Raymond",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.16.4"
+  }
+}
