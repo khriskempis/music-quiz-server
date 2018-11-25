@@ -4,6 +4,7 @@ const morgan = require('morgan');
 const passport = require('passport');
 
 const { router: usersRouter } = require('./users');
+const { router: authRouter, localStrategy, jwtStrategy } = require('./auth');
 
 mongoose.Promise = global.Promise
 
@@ -25,19 +26,23 @@ if (req.method === 'OPTIONS') {
 next();
 });
 
-// passport.use(localStrategy);
-// passport.use(jwtStrategy);
+passport.use(localStrategy);
+passport.use(jwtStrategy);
 
 app.use('/api/users/', usersRouter);
-// app.use('/api/auth/', authRouter);
+app.use('/api/auth/', authRouter);
 
-// const jwtAuth = passport.authenticate('jwt', {session: false });
+const jwtAuth = passport.authenticate('jwt', {session: false });
 
 // app.get('/api/protected', jwtAuth, (req, res) => {
 //   return res.json({
 //     data: 'rosebud'
 //   })
 // });
+
+app.use('*', (req, res) => {
+  return res.status(404).json({ message: 'Not Found' });
+});
 
 let server;
 

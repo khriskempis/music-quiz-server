@@ -93,7 +93,7 @@ router.post('/', jsonParser, (req, res) => {
   name = name.trim();
 
   return User.find({email})
-    .count()
+    .countDocuments()
     .then(count => {
       if(count > 0){
         return Promise.reject({

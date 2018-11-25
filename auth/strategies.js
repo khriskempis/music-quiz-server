@@ -7,7 +7,11 @@ const { Strategy: JwtStrategy, ExtractJwt } = require('passport-jwt');
 const { User } = require('../users/models');
 const { JWT_SECRET } = require('../config');
 
-const localStrategy = new LocalStrategy((email, password, callback) => {
+
+// localStrategy looks for username, but because Im only requiring an email to authenticate, 
+// I need to pass in options to change email in the usernameField
+
+const localStrategy = new LocalStrategy({usernameField: "email", passwordField: "password"}, (email, password, callback) => {
   let user;
   User.findOne({email: email})
     .then(_user => {
