@@ -1,0 +1,11 @@
+language: node_js
+node_js: node
+services:
+    - mongodb
+deploy:
+  provider: heroku
+  api_key:
+    secure: b3qlKzmFYmpkYWoO43yPViV5OJPwq6vcmnZkZJZkAZ0EXsIpe0E03M2RDos/BSPIkzrh3anufFnjUpl06afgygjQ4YQNStdA8Lj3dmNXSgPeJ4H5dasmAGnELor0aAjsF+ur6nGY/wSQ6T2EdAS0Q7IUwMvuuincVqWr/h707TVmC7sP4ZaIInRdKJeT5Jw9MOTO4gDCGnoFeFJthKJdlwUV16wdTcXmMNJ41LJZAlHNztYP/H27thBLQKymsWmg5noDgwXS79uZv9DmO1LPn0a/IqjuDIwnEWOQ/G2bAPieOcOCcpmGq94uoIBb7EtPvTjlyvBQvIBG/lNxN2LsPr5NPl+jgJJKxsgZEMPumXAwkF30OuOvhAQjSX/5jGze007/Fv1qF2Y+naTStlQ7VPI+8PyYHIGnGEt38wCLo6UvXxx3AjLXNNf0TsT6h89NlZArx7znCNuxcROutPtyYk+0PLNcFJtscSjLuBrIDnNd9hSjF5GP5W7dnTOQKLA6ymS0NxRq52dItRbV+W6ZRTWbOtvQRRwOPXs6W/66yI5zfndYVkDlkhypcWrnQQyPSsszpiCJHtVv5wGliPpUp27SPsjCheZmDXjDZJmmxAFkSLxPZ1+c3sC/3D6TbDm25S6dkpamcX1aGTHMoe1pw8sGkPzpaVgUcEWo7xEgtWk=
+  app: young-crag-97462
+  on:
+    repo: khriskempis/music-quiz-server
