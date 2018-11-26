@@ -30,7 +30,7 @@ router.post('/', jsonParser, (req, res)=> {
     return res.status(422).json({
       code: 422,
       reason: 'ValidationError',
-      message: 'Incorrect Field Type',
+      message: 'Incorrect Field Type: expected String',
       location: nonStringField
     })
   }
@@ -42,7 +42,10 @@ router.post('/', jsonParser, (req, res)=> {
   note = note.trim();
   clef = clef.trim();
 
-  return NoteCard.find({noteId})
+  return NoteCard.find({
+      noteId: noteId,
+      clef: clef
+    })
     .countDocuments()
     .then(count => {
       if(count > 0){
@@ -60,7 +63,7 @@ router.post('/', jsonParser, (req, res)=> {
       })
     })
     .then(noteCard => {
-      return res.status(201).json(noteCard);
+      return res.status(201).json(noteCard.serialize());
     })
     .catch(err=> {
       if(err.reason === "ValidationError"){
