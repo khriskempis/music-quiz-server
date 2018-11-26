@@ -73,9 +73,7 @@ router.post('/', jsonParser, (req, res)=> {
 router.get('/:test', (req,res)=> {
   if(req.params.test === "middle"){
     return NoteCard.find({
-      noteId: {
-        $in: ["C4T", "C4", "D4", "E4", "F4", "G4"]
-      }
+      noteId: "C4T"
     })
   }
 
