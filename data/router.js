@@ -42,10 +42,7 @@ router.post('/', jsonParser, (req, res)=> {
   note = note.trim();
   clef = clef.trim();
 
-  return NoteCard.find({
-      noteId,
-      clef
-    })
+  return NoteCard.find({noteId})
     .countDocuments()
     .then(count => {
       if(count > 0){
