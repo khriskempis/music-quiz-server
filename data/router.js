@@ -71,6 +71,7 @@ router.post('/', jsonParser, (req, res)=> {
 });
 
 router.get('/:test', (req,res)=> {
+  console.log(req.params.test)
   if(req.params.test === "middle"){
     return NoteCard.find({
       noteId: "C4T"
