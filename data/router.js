@@ -2,6 +2,7 @@
 
 const express = require('express');
 const bodyParser = require('body-parser');
+const mongoose = require('mongoose')
 
 const { NoteCard } = require('./models');
  
@@ -70,16 +71,51 @@ router.post('/', jsonParser, (req, res)=> {
     })
 });
 
-router.get('/:test', (req,res)=> {
-  console.log(req.params.test)
-  if(req.params.test === "middle"){
-    return NoteCard.find({
-      noteId: "C4T"
-    })
-  }
-
+router.get('/type/:test', (req,res)=> {
   return NoteCard.find({
     clef: req.params.test
+  })
+  .then(data => {
+    return res.json(data.map(noteCard => noteCard.serialize()))
+  })
+  .catch(err => {
+    return res.status(422).json({code: 422, error: err})
+  })
+})
+
+router.get('/test/middle', (req, res)=> {
+  return NoteCard.find({
+    noteId: {
+      $in : [
+        "C4T",
+        "D4",
+        "E4",
+        "F4",
+        "G4",
+        "C4",
+        "B3",
+        "A3",
+        "G3",
+        "F3"
+      ]
+    }
+  })
+  .then(data => {
+    return res.json(data.map(noteCard => noteCard.serialize()))
+  })
+  .catch(err => {
+    return res.status(422).json({code: 422, error: err})
+  });
+});
+
+router.get('/test/cmajor', (req, res)=> {
+  return NoteCard.find({
+    noteId : {
+      $in : [
+        "G4",
+        "F4"
+      ]
+    }
   })
   .then(data => {
     return res.json(data.map(noteCard => noteCard.serialize()))
