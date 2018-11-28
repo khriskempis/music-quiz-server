@@ -384,6 +384,27 @@ describe('/api/users', function(){
           });
       });
     })
+
+  //   describe('GET', function(){
+  //     const token = jwt.sign(
+  //       {
+  //         user: {
+  //           name,
+  //           email
+  //         }
+  //       },
+  //       JWT_SECRET,
+  //       {
+  //         algorithm: 'HS256',
+  //         subject: username,
+  //         expiresIn: '7d'
+  //       }
+  //     );
+
+  //     it('should reject access to unauthenticated user', ()=> {
+        
+  //     })
+  //   })
   });
 
 

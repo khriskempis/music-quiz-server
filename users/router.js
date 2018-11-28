@@ -2,8 +2,10 @@
 
 const express = require('express');
 const bodyParser = require('body-parser');
+const passport = require('passport');
 
 const {User} = require('./models');
+const { localStrategy, jwtStrategy } = require('../auth');
 
 const router = express.Router();
 
@@ -123,4 +125,43 @@ router.post('/', jsonParser, (req, res) => {
     });
 });
 
+passport.use(localStrategy);
+passport.use(jwtStrategy);
+
+const jwtAuth = passport.authenticate('jwt', {session: false });
+
+router.get('/:id', jwtAuth, (req, res)=> {
+  return User.findById(req.params.id)
+    .then(user => {
+      if(!user){
+        return Promise.reject({
+          code: 422,
+          reason: "ValidationError",
+          message: "User does not exist"
+        })
+      }
+      return res.json(user.serialize())
+    })
+    .catch(err => {
+      // if(err){
+      //    return Promise.reject({
+      //      code: 422,
+      //      reason: "CastError",
+      //      error: err
+      //    })
+      // }
+      res.status(500).json({
+        code: 500,
+        message: "Internal Server Error",
+        error: err
+      })
+    })
+})
+
 module.exports = {router};
+
+// app.get('/api/protected', jwtAuth, (req, res) => {
+//   return res.json({
+//     data: 'rosebud'
+//   })
+// });

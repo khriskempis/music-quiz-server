@@ -291,5 +291,21 @@ describe('/api/data', function(){
           })
       });
     });
+
+    // describe('GET', ()=> {
+    //   it('should return items in database', ()=> {
+    //     return NoteCard.create({
+    //       imgUrl,
+    //       noteId,
+    //       note,
+    //       clef
+    //     })
+    //     .then(()=> {
+    //       return chai.request(app)
+    //         .get('/api/data/bass')
+
+    //     })
+    //   })
+    // })
   })
 });
