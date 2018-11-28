@@ -337,6 +337,7 @@ describe('/api/users', function(){
             expect(res.body).to.be.an('object');
             expect(res.body).to.have.keys(
               'name',
+              'id',
               'email'
             );
             expect(res.body.name).to.equal(name);
@@ -369,6 +370,7 @@ describe('/api/users', function(){
             expect(res.body).to.be.an('object');
             expect(res.body).to.have.keys(
               'name',
+              'id',
               'email',
             );
             expect(res.body.name).to.equal(name);
