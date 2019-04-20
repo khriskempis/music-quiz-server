@@ -92,6 +92,13 @@ router.get('/type/:test', async (req,res)=> {
           $in : ["C4T","D4","E4","F4","G4","G3","F3","E3","D3","C3"]
         }
       })
+    } else if(testType === "middle"){
+      dbData = await NoteCard.find({
+        noteId: {
+          $in : ["C4T","D4","E4","F4","G4","C4","B3","A3","G3","F3"]
+        }
+      })
+
     } else {
       dbData = await NoteCard.find({
         clef: req.params.test
