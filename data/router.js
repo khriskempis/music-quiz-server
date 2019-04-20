@@ -10,6 +10,15 @@ const router = express.Router();
 
 const jsonParser = bodyParser.json();
 
+
+const asyncMiddleWare = fn => 
+  (req, res, next) => {
+    Promise.resolve(fn(req, res, next))
+      .catch(next);
+  }
+
+
+
 router.post('/', jsonParser, (req, res)=> {
   const requiredFields = ['imgUrl', 'noteId', 'note', 'clef'];
   const missingField = requiredFields.find(field => !(field in req.body));
@@ -71,42 +80,30 @@ router.post('/', jsonParser, (req, res)=> {
     })
 });
 
-router.get('/type/:test', (req,res)=> {
+router.get('/type/:test', async (req,res)=> {
   const testType = req.params.test;
-  if(testType === "cmajor"){
-    return NoteCard.find({
-      noteId: {
-        $in : [
-          "C4T",
-          "D4",
-          "E4",
-          "F4",
-          "G4",
-          "G3",
-          "F3",
-          "E3",
-          "D3",
-          "C3"
-        ]
-      }
-    })
-    .then(data => {
-      return res.json(data.map(noteCard => noteCard.serialize()))
-    })
-    .catch(err => {
-      return res.status(422).json({code: 422, err: err})
-    }) 
+
+  let dbData
+
+  try {
+    if(testType === "cmajor"){
+      dbData = await NoteCard.find({
+        noteId: {
+          $in : ["C4T","D4","E4","F4","G4","G3","F3","E3","D3","C3"]
+        }
+      })
+    } else {
+      dbData = await NoteCard.find({
+        clef: req.params.test
+      })
+    }
+
+    let data = await dbData.map(noteCard => noteCard.serialize());
+    return res.json(data);
+
+  } catch(err) {
+    return res.status(422).json({code: 422, err: err})
   }
-  
-  return NoteCard.find({
-    clef: req.params.test
-  })
-  .then(data => {
-    return res.json(data.map(noteCard => noteCard.serialize()))
-  })
-  .catch(err => {
-    return res.status(422).json({code: 422, error: err})
-  })
 })
 
 router.get('/test/middle', (req, res)=> {
@@ -151,12 +148,6 @@ router.get('/test/middle', (req, res)=> {
 //   })
 // })
 
-const asyncMiddleWare = fn => 
-  (req, res, next) => {
-    Promise.resolve(fn(req, res, next))
-      .catch(next);
-  }
-
 router.get('/test/cmajor-test', asyncMiddleWare(async (req, res, next)=> {
   // if there's an error thrown, asyncMiddleWare will pass it to next() and 
   // express will handle the error
@@ -165,7 +156,6 @@ router.get('/test/cmajor-test', asyncMiddleWare(async (req, res, next)=> {
             $in : [
               "G4",
               "F4",
-              "test"
             ]
           }
   })
