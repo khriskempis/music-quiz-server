@@ -43,7 +43,7 @@ const jwtAuth = passport.authenticate('jwt', {session: false });
 // });
 
 app.use('*', (req, res) => {
-  return res.status(404).json({ message: 'Not Found' });
+  return res.status(404).json({ message: 'Internal Server Error' });
 });
 
 let server;
