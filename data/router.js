@@ -157,7 +157,7 @@ const asyncMiddleWare = fn =>
       .catch(next);
   }
 
-router.get('/test/cmajor', asyncMiddleWare(async (req, res, next)=> {
+router.get('/test/cmajor-test', asyncMiddleWare(async (req, res, next)=> {
   // if there's an error thrown, asyncMiddleWare will pass it to next() and 
   // express will handle the error
   let dbData = await NoteCard.find({
