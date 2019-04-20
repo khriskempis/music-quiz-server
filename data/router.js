@@ -164,7 +164,8 @@ router.get('/test/cmajor-test', asyncMiddleWare(async (req, res, next)=> {
     noteId : {
             $in : [
               "G4",
-              "F4"
+              "F4",
+              "test"
             ]
           }
   })
