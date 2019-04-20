@@ -134,21 +134,42 @@ router.get('/test/middle', (req, res)=> {
   });
 });
 
-router.get('/test/cmajor', (req, res)=> {
-  return NoteCard.find({
+// router.get('/test/cmajor', (req, res)=> {
+//   return NoteCard.find({
+//     noteId : {
+//       $in : [
+//         "G4",
+//         "F4"
+//       ]
+//     }
+//   })
+//   .then(data => {
+//     return res.json(data.map(noteCard => noteCard.serialize()))
+//   })
+//   .catch(err => {
+//     return res.status(422).json({code: 422, error: err})
+//   })
+// })
+
+const asyncMiddleWare = fn => 
+  (req, res, next) => {
+    Promise.resolve(fn(req, res, next))
+      .catch(next);
+  }
+
+router.get('/test/cmajor', asyncMiddleWare(async (req, res, next)=> {
+  // if there's an error thrown, asyncMiddleWare will pass it to next() and 
+  // express will handle the error
+  let dbData = await NoteCard.find({
     noteId : {
-      $in : [
-        "G4",
-        "F4"
-      ]
-    }
+            $in : [
+              "G4",
+              "F4"
+            ]
+          }
   })
-  .then(data => {
-    return res.json(data.map(noteCard => noteCard.serialize()))
-  })
-  .catch(err => {
-    return res.status(422).json({code: 422, error: err})
-  })
-})
+  let data = await dbData.map(noteCard => noteCard.serialize());
+  res.json(data);
+}))
 
 module.exports = { router }
