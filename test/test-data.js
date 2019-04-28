@@ -303,7 +303,9 @@ describe('/api/data', function(){
     //     .then(()=> {
     //       return chai.request(app)
     //         .get('/api/data/bass')
-
+    //         .then(res => {
+    //           expect(res).to.equal()
+    //         })
     //     })
     //   })
     // })

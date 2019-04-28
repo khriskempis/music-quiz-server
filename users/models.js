@@ -2,14 +2,49 @@
 
 const bcrypt = require('bcryptjs');
 const mongoose = require('mongoose');
+const ObjectId = mongoose.Schema.Types.ObjectId
 
 mongoose.Promise = global.Promise;
+
+//  User LOG model
+
+const UserLogSchema = mongoose.Schema({
+  user: { type: ObjectId, ref: "User" },
+  date: { type: String, required: true }
+})
+
+const UserLog = mongoose.model('UserLog', UserLogSchema)
+
+// PRACTICE model
+
+const PracticeTestSchema = mongoose.Schema({
+  user: { type: ObjectId, ref: "User" },
+  date: { type: String, required: true },
+  score: { type: Number, required: true }
+})
+
+const PracticeTest = mongoose.model('PracticeTest', PracticeTestSchema)
+
+// TEST model 
+
+const TestSchema = mongoose.Schema({
+  user: { type: ObjectId, ref: "User" },
+  date: { type: String, required: true },
+  score: { type: String, required: true }
+})
+
+const Test = mongoose.model('Test', TestSchema)
+
+
+
+// USER model 
 
 const UserSchema = mongoose.Schema({
   name: {
     type: String, 
     required: true,
   }, 
+  userName: { type: String },
   email: {
     type: String, 
     required: true
@@ -17,14 +52,21 @@ const UserSchema = mongoose.Schema({
   password: {
     type: String, 
     required: true
-  }
+  },
+  userLog: [UserLogSchema],
+  practiceTests: [{type: ObjectId, ref: "PracticeTest"}],
+  tests: [TestSchema],
 });
 
 UserSchema.methods.serialize = function() {
   return {
     id: this._id,
     name: this.name,
-    email: this.email
+    userName: this.userName,
+    email: this.email,
+    userLog: this.userLog,
+    practiceTests: this.practiceTests,
+    tests: this.tests
   }
 };
 
@@ -38,4 +80,5 @@ UserSchema.statics.hashPassword = function(password){
 
 const User = mongoose.model('User', UserSchema);
 
-module.exports = {User}
+
+module.exports = {User, PracticeTest, Test, UserLog}

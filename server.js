@@ -9,7 +9,7 @@ const { router: dataRouter } = require('./data');
 
 mongoose.Promise = global.Promise
 
-const { PORT, DATABASE_URL } = require('./config');
+const { PORT, DATABASE_URL, TEST_DATABASE_URL } = require('./config');
 
 const app = express();
 
@@ -82,6 +82,7 @@ function closeServer(){
 
 if (require.main === module) {
   runServer(DATABASE_URL).catch(err => console.error(err));
+  // runServer(TEST_DATABASE_URL).catch(err => console.error(err));
 }
 
 module.exports = {app, runServer, closeServer}

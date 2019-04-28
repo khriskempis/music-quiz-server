@@ -4,7 +4,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const passport = require('passport');
 
-const {User} = require('./models');
+const {User, UserLog, PracticeTest, Test} = require('./models');
 const { localStrategy, jwtStrategy } = require('../auth');
 
 const router = express.Router();
@@ -45,7 +45,7 @@ router.post('/', jsonParser, (req, res) => {
     field => req.body[field].trim() !== req.body[field]
   );
 
-  if(nonTrimmedField) {
+  if(nonTrimmedField) {s
     return res.status(422).json({
       code: 422,
       reason: 'ValidationError',
@@ -111,7 +111,11 @@ router.post('/', jsonParser, (req, res) => {
       return User.create({
         name,
         email,
-        password: hash
+        userName: '',
+        password: hash,
+        userLog: [],
+        practiceTests: [],
+        tests: [],
       });
     })
     .then(user => {
@@ -121,44 +125,117 @@ router.post('/', jsonParser, (req, res) => {
       if(err.reason === 'ValidationError'){
         return res.status(err.code).json(err);
       }
-      res.status(500).json({code: 500, message: 'Internal Server Error'});
+      res.status(500).json({code: 500, message: 'Error: could not create user'});
     });
 });
+
 
 passport.use(localStrategy);
 passport.use(jwtStrategy);
 
 const jwtAuth = passport.authenticate('jwt', {session: false });
 
-router.get('/:id', jwtAuth, (req, res)=> {
-  return User.findById(req.params.id)
-    .then(user => {
-      if(!user){
-        return Promise.reject({
-          code: 422,
-          reason: "ValidationError",
-          message: "User does not exist"
-        })
-      }
-      return res.json(user.serialize())
-    })
-    .catch(err => {
-      // if(err){
-      //    return Promise.reject({
-      //      code: 422,
-      //      reason: "CastError",
-      //      error: err
-      //    })
-      // }
-      res.status(500).json({
-        code: 500,
-        message: "Internal Server Error",
-        error: err
+router.get('/:id', async (req, res)=> {
+
+  const userId = req.params.id
+  try{
+    const user = await User.findById(userId).select("practiceTests").populate("practiceTests")
+    res.status(200).json(user);
+  } catch(err){
+    res.status(422).json({message: "could not find user"})
+  }
+  // return User.findById(req.params.id)
+  //   .then(user => {
+  //     if(!user){
+  //       return Promise.reject({
+  //         code: 422,
+  //         reason: "ValidationError",
+  //         message: "User does not exist"
+  //       })
+  //     }
+  //     return res.json(user.serialize())
+  //   })
+  //   .catch(err => {
+  //     // if(err){
+  //     //    return Promise.reject({
+  //     //      code: 422,
+  //     //      reason: "CastError",
+  //     //      error: err
+  //     //    })
+  //     // }
+  //     res.status(500).json({
+  //       code: 500,
+  //       message: "Internal Server Error",
+  //       error: err
+  //     })
+  //   })
+})
+
+router.get('/', async (req, res) => {
+  try{
+    const users = await User.find({});
+    res.json(users)
+  } catch(err){
+    res.status(422).json({code:422, error: err})
+  }
+})
+
+router.delete('/:id', async (req, res)=> {
+  const userId = req.params.id;
+  try{
+    const user = await User.findById(userId);
+    if(!user){
+      return res.status(422).json({
+        code: 422,
+        message: "User does not exist"
       })
+    } else {
+      let deletedUser = await User.findOneAndDelete(userId)
+      res.status(200).json({message: "User deleted", data: deletedUser})
+    }
+
+  } catch(err){
+    res.status(422).json({code: 422, error: err})
+  }
+})
+
+
+// Practice Tests
+
+router.post("/practice-test", jsonParser, async (req, res) => {
+  let {user, score} = req.body
+
+  try {
+    const newPracticeTest = await PracticeTest.create({
+      user,
+      date: new Date(),
+      score
     })
+    const currentUser = await User.findByIdAndUpdate(
+      {"_id" : user},
+      {
+        $push : {
+          practiceTests : newPracticeTest._id
+        }
+      }).exec()
+
+    return res.status(200).json({message: "practice test logged", currentUser, newPracticeTest})
+  } catch(err){
+    res.status(422).json({message: "could not log test", error: err})
+  }
+})
+
+router.get("/practice-tests", async (req, res)=> {
+  try{
+    const practiceTests = await PracticeTest.find({})
+    return res.status(200).json(practiceTests);
+  } catch(err) {
+    res.status(422).json({message: "could not find any practice tests"})
+  }
 })
 
 module.exports = {router};
+
 
 // app.get('/api/protected', jwtAuth, (req, res) => {
 //   return res.json({
