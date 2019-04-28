@@ -53,7 +53,7 @@ const UserSchema = mongoose.Schema({
     type: String, 
     required: true
   },
-  userLog: [UserLogSchema],
+  userLog: [{type: ObjectId, ref: "UserLog"}],
   practiceTests: [{type: ObjectId, ref: "PracticeTest"}],
   tests: [TestSchema],
 });

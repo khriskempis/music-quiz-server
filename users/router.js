@@ -139,11 +139,14 @@ router.get('/:id', async (req, res)=> {
 
   const userId = req.params.id
   try{
-    const user = await User.findById(userId).select("practiceTests").populate("practiceTests")
+    const user = await User.findById(userId)
     res.status(200).json(user);
   } catch(err){
     res.status(422).json({message: "could not find user"})
   }
+
+  // ADD VALIDATION 
+
   // return User.findById(req.params.id)
   //   .then(user => {
   //     if(!user){
@@ -199,8 +202,46 @@ router.delete('/:id', async (req, res)=> {
   }
 })
 
+// User Log
 
-// Practice Tests
+router.post("/user-log", jsonParser, async (req, res)=> {
+  const userId = req.body.userId;
+  console.log(userId)
+  try {
+    const newLog = await UserLog.create({
+      user: userId,
+      date: new Date()
+    })
+    const user = await User.findByIdAndUpdate(
+      {"_id" : userId},
+      { 
+        $push : {
+          userLog: newLog._id
+        }
+      }
+    ).exec();
+    res.status(201).json({message: "User logged in on " + newLog.date, user })
+
+  } catch(err){
+    res.status(422).json({message: "Could not register log", error: err})
+  }
+});
+
+router.get("/user-log/:id", async (req, res)=> {
+  const userId = req.params.id
+  try {
+    const user = await User.findById(userId)
+      .select("userLog")
+      .populate("userLog", "date")
+
+    res.status(200).json(user)
+  } catch(err) {
+    res.status(422).json({message: "could not retrieve user logs", error: err})
+  }
+})
+
+
+// Practice Tests Log
 
 router.post("/practice-test", jsonParser, async (req, res) => {
   let {user, score} = req.body
@@ -225,13 +266,23 @@ router.post("/practice-test", jsonParser, async (req, res) => {
   }
 })
 
-router.get("/practice-tests", async (req, res)=> {
+router.get("/practice-tests/:id", async (req, res)=> {
+  const userId = req.params.id
   try{
-    const practiceTests = await PracticeTest.find({})
-    return res.status(200).json(practiceTests);
-  } catch(err) {
-    res.status(422).json({message: "could not find any practice tests"})
+    const user = await User.findById(userId)
+      .select("practiceTests")
+      .populate("practiceTests")
+
+    res.status(200).json(user);
+  } catch(err){
+    res.status(422).json({message: "could not find user"})
   }
+  // try{
+  //   const practiceTests = await PracticeTest.find({})
+  //   return res.status(200).json(practiceTests);
+  // } catch(err) {
+  //   res.status(422).json({message: "could not find any practice tests"})
+  // }
 })
 
 module.exports = {router};
