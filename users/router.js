@@ -271,7 +271,7 @@ router.get("/practice-tests/:id", async (req, res)=> {
   try{
     const user = await User.findById(userId)
       .select("practiceTests")
-      .populate("practiceTests")
+      .populate("practiceTests", "date score")
 
     res.status(200).json(user);
   } catch(err){
@@ -283,6 +283,46 @@ router.get("/practice-tests/:id", async (req, res)=> {
   // } catch(err) {
   //   res.status(422).json({message: "could not find any practice tests"})
   // }
+})
+
+// Tests Log
+
+router.post("/test", jsonParser, async (req, res)=> {
+  let {user, score} = req.body
+
+  try {
+    const newTest = await Test.create({
+      user,
+      date: new Date(),
+      score
+    })
+    const currentUser = await User.findByIdAndUpdate(
+      {"_id" : user},
+      {
+        $push : {
+          tests : newTest._id
+        }
+      }).exec()
+
+    return res.status(201).json({message: "test logged", currentUser, newTest})
+  } catch(err){
+    res.status(422).json({message: "could not log test", error: err})
+  }
+})
+
+router.get("/test/:id", async (req, res)=> {
+  const userId = req.params.id;
+
+  try {
+    const user = await User.findById(userId)
+      .select("tests")
+      .populate("tests", "date score")
+      .exec()
+
+    res.status(200).json({message: "Test Logs", user})
+  } catch(err) {
+    res.status(422).json({message: "could not retrieve test", error: err})
+  }
 })
 
 module.exports = {router};

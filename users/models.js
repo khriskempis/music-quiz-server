@@ -30,7 +30,7 @@ const PracticeTest = mongoose.model('PracticeTest', PracticeTestSchema)
 const TestSchema = mongoose.Schema({
   user: { type: ObjectId, ref: "User" },
   date: { type: String, required: true },
-  score: { type: String, required: true }
+  score: { type: Number, required: true }
 })
 
 const Test = mongoose.model('Test', TestSchema)
@@ -55,7 +55,7 @@ const UserSchema = mongoose.Schema({
   },
   userLog: [{type: ObjectId, ref: "UserLog"}],
   practiceTests: [{type: ObjectId, ref: "PracticeTest"}],
-  tests: [TestSchema],
+  tests: [{type: ObjectId, ref: "Test"}]
 });
 
 UserSchema.methods.serialize = function() {
