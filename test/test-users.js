@@ -336,7 +336,8 @@ describe("/api/users", function() {
               "practiceTests",
               "tests",
               "userLog",
-              "userName"
+              "userName",
+              "points"
             );
             expect(res.body.name).to.equal(name);
             expect(res.body.email).to.equal(email);
@@ -366,15 +367,6 @@ describe("/api/users", function() {
           .then(res => {
             expect(res).to.have.status(201);
             expect(res.body).to.be.an("object");
-            expect(res.body).to.have.keys(
-              "name",
-              "id",
-              "email",
-              "practiceTests",
-              "tests",
-              "userLog",
-              "userName"
-            );
             expect(res.body.name).to.equal(name);
             expect(res.body.email).to.equal(email);
             return User.findOne({

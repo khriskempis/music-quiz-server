@@ -1,8 +1,8 @@
-'use strict';
+"use strict";
 
-const bcrypt = require('bcryptjs');
-const mongoose = require('mongoose');
-const ObjectId = mongoose.Schema.Types.ObjectId
+const bcrypt = require("bcryptjs");
+const mongoose = require("mongoose");
+const ObjectId = mongoose.Schema.Types.ObjectId;
 
 mongoose.Promise = global.Promise;
 
@@ -11,9 +11,9 @@ mongoose.Promise = global.Promise;
 const UserLogSchema = mongoose.Schema({
   user: { type: ObjectId, ref: "User" },
   date: { type: String, required: true }
-})
+});
 
-const UserLog = mongoose.model('UserLog', UserLogSchema)
+const UserLog = mongoose.model("UserLog", UserLogSchema);
 
 // PRACTICE model
 
@@ -21,41 +21,40 @@ const PracticeTestSchema = mongoose.Schema({
   user: { type: ObjectId, ref: "User" },
   date: { type: String, required: true },
   score: { type: Number, required: true }
-})
+});
 
-const PracticeTest = mongoose.model('PracticeTest', PracticeTestSchema)
+const PracticeTest = mongoose.model("PracticeTest", PracticeTestSchema);
 
-// TEST model 
+// TEST model
 
 const TestSchema = mongoose.Schema({
   user: { type: ObjectId, ref: "User" },
   date: { type: String, required: true },
   score: { type: Number, required: true }
-})
+});
 
-const Test = mongoose.model('Test', TestSchema)
+const Test = mongoose.model("Test", TestSchema);
 
-
-
-// USER model 
+// USER model
 
 const UserSchema = mongoose.Schema({
   name: {
-    type: String, 
-    required: true,
-  }, 
+    type: String,
+    required: true
+  },
   userName: { type: String },
   email: {
-    type: String, 
+    type: String,
     required: true
   },
   password: {
-    type: String, 
+    type: String,
     required: true
   },
-  userLog: [{type: ObjectId, ref: "UserLog"}],
-  practiceTests: [{type: ObjectId, ref: "PracticeTest"}],
-  tests: [{type: ObjectId, ref: "Test"}]
+  userLog: [{ type: ObjectId, ref: "UserLog" }],
+  practiceTests: [{ type: ObjectId, ref: "PracticeTest" }],
+  tests: [{ type: ObjectId, ref: "Test" }],
+  points: { type: Number }
 });
 
 UserSchema.methods.serialize = function() {
@@ -66,19 +65,19 @@ UserSchema.methods.serialize = function() {
     email: this.email,
     userLog: this.userLog,
     practiceTests: this.practiceTests,
-    tests: this.tests
-  }
+    tests: this.tests,
+    points: this.points
+  };
 };
 
-UserSchema.methods.validatePassword = function(password){
+UserSchema.methods.validatePassword = function(password) {
   return bcrypt.compare(password, this.password);
 };
 
-UserSchema.statics.hashPassword = function(password){
+UserSchema.statics.hashPassword = function(password) {
   return bcrypt.hash(password, 10);
-}
+};
 
-const User = mongoose.model('User', UserSchema);
+const User = mongoose.model("User", UserSchema);
 
-
-module.exports = {User, PracticeTest, Test, UserLog}
+module.exports = { User, PracticeTest, Test, UserLog };

@@ -115,7 +115,8 @@ router.post("/", jsonParser, (req, res) => {
         password: hash,
         userLog: [],
         practiceTests: [],
-        tests: []
+        tests: [],
+        points: 0
       });
     })
     .then(user => {
